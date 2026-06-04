@@ -22,11 +22,13 @@ class AppNavigationBar extends StatelessWidget {
     final pulse = context.pulse;
 
     return NavigationBar(
+      height: 68,
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,
-      backgroundColor: const Color(0xFF061118),
-      indicatorColor: pulse.cyan.withValues(alpha: 0.18),
+      backgroundColor: const Color(0xF2050B11),
+      indicatorColor: pulse.cyan.withValues(alpha: 0.20),
       surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.black.withValues(alpha: 0.4),
       destinations: [
         const NavigationDestination(
           icon: Icon(Icons.dashboard_outlined),
@@ -70,6 +72,204 @@ class AppNavigationBar extends StatelessWidget {
           label: 'More',
         ),
       ],
+    );
+  }
+}
+
+class HomeTopBar extends StatelessWidget {
+  const HomeTopBar({
+    super.key,
+    required this.queuedCount,
+    required this.onPreview,
+  });
+
+  final int queuedCount;
+  final VoidCallback onPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    final pulse = context.pulse;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 2, 2, 8),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: pulse.surfaceStrong,
+              borderRadius: BorderRadius.circular(PulseRadius.md),
+              border: Border.all(color: pulse.line),
+            ),
+            child: Icon(Icons.phone_in_talk, color: pulse.cyan, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  appname,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 22,
+                      ),
+                ),
+                Text(
+                  queuedCount == 0 ? 'Ready to schedule' : '$queuedCount calls queued',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          QueueBadge(count: queuedCount),
+          const SizedBox(width: 8),
+          IconButton.filledTonal(
+            tooltip: 'Preview call',
+            onPressed: onPreview,
+            icon: const Icon(Icons.play_arrow_rounded),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class QuickActionPanel extends StatelessWidget {
+  const QuickActionPanel({
+    super.key,
+    required this.callerName,
+    required this.delay,
+    required this.repeatCount,
+    required this.vibrate,
+    required this.flash,
+  });
+
+  final String callerName;
+  final String delay;
+  final int repeatCount;
+  final bool vibrate;
+  final bool flash;
+
+  @override
+  Widget build(BuildContext context) {
+    final pulse = context.pulse;
+
+    return PulseGlassPanel(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: pulse.cyan.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(PulseRadius.md),
+                  border: Border.all(color: pulse.cyan.withValues(alpha: 0.26)),
+                ),
+                child: Icon(Icons.person_outline, color: pulse.cyan),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      callerName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      '$delay delay • ${repeatCount}x repeat',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: pulse.mint.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(PulseRadius.pill),
+                  border: Border.all(color: pulse.mint.withValues(alpha: 0.24)),
+                ),
+                child: Text(
+                  'Ready',
+                  style: TextStyle(
+                    color: pulse.mint,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _CompactStatus(
+                  icon: vibrate ? Icons.vibration : Icons.notifications_off,
+                  label: vibrate ? 'Vibrate on' : 'Silent',
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _CompactStatus(
+                  icon: flash ? Icons.flash_on : Icons.flash_off,
+                  label: flash ? 'Flash on' : 'Flash off',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompactStatus extends StatelessWidget {
+  const _CompactStatus({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final pulse = context.pulse;
+
+    return Container(
+      height: 42,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.045),
+        borderRadius: BorderRadius.circular(PulseRadius.md),
+        border: Border.all(color: pulse.line),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: pulse.inkMuted, size: 17),
+          const SizedBox(width: 7),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: pulse.inkMuted, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -137,14 +337,14 @@ class QueueBadge extends StatelessWidget {
     final pulse = context.pulse;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: pulse.cyan.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(PulseRadius.pill),
         border: Border.all(color: pulse.cyan.withValues(alpha: 0.36)),
       ),
       child: Text(
-        '$count queued',
+        count == 0 ? 'Queue' : '$count queued',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(color: pulse.cyan, fontWeight: FontWeight.w800),

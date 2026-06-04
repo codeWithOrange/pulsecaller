@@ -8,7 +8,8 @@ void main() {
 
     expect(find.text('PulseCall'), findsOneWidget);
     expect(find.text('Caller Setup'), findsOneWidget);
-    expect(find.text('Schedule Smart Call'), findsOneWidget);
-    expect(find.text('Upcoming'), findsOneWidget);
+    expect(find.text('Call Behavior'), findsOneWidget);
+    expect(find.text('Schedule Call'), findsOneWidget);
+    expect(find.text('Ready'), findsOneWidget);
   });
 }

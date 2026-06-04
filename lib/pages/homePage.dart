@@ -121,44 +121,44 @@ class _HomePageState extends State<HomePage>
                 slivers: [
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(
-                      isWide ? 28 : 18,
-                      18,
-                      isWide ? 28 : 18,
-                      18,
+                      isWide ? 12 : 0,
+                      8,
+                      isWide ? 12 : 0,
+                      8,
                     ),
                     sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 1180),
-                          child: Column(
-                            children: [
-                              HomeHeader(
-                                scheduledCount: _controller.scheduled.length,
-                                onPreview: _previewCall,
-                              ),
-                              const SizedBox(height: 18),
-                              StatusStrip(
-                                delay: formatDurationShort(
-                                  Duration(seconds: _controller.delaySeconds),
-                                ),
-                                repeatCount: _controller.repeatCount,
-                                vibrate: _controller.vibrate,
-                                flash: _controller.screenFlash,
-                              ),
-                              const SizedBox(height: 18),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 260),
-                                switchInCurve: Curves.easeOutCubic,
-                                switchOutCurve: Curves.easeInCubic,
-                                child: _buildSelectedPage(isWide),
-                              ),
-                            ],
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isWide ? 0 : 12,
+                            ),
+                            child: HomeTopBar(
+                              queuedCount: _controller.scheduled.length,
+                              onPreview: _previewCall,
+                            ),
                           ),
-                        ),
+                          QuickActionPanel(
+                            callerName: _controller.callerName,
+                            delay: formatDurationShort(
+                              Duration(seconds: _controller.delaySeconds),
+                            ),
+                            repeatCount: _controller.repeatCount,
+                            vibrate: _controller.vibrate,
+                            flash: _controller.screenFlash,
+                          ),
+                          const SizedBox(height: 8),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 260),
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            child: _buildSelectedPage(isWide),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 4)),
                 ],
               ),
             ),
@@ -190,31 +190,9 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildStudioPage(bool isWide) {
-    final preview = PhonePreview(
-      callerName: _controller.callerName,
-      callerNumber: _controller.callerNumber,
-      isVibrate: _controller.vibrate,
-      screenFlash: _controller.screenFlash,
-      showCallerNumber: _controller.showCallerNumber,
-      callNote: _controller.callNote,
-      profile: _controller.currentProfile,
-      delayLabel: formatDurationShort(Duration(seconds: _controller.delaySeconds)),
-      onPreview: _previewCall,
-    );
-    final composer = _buildComposer();
-
     return KeyedSubtree(
       key: const ValueKey('studio'),
-      child: isWide
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 5, child: preview),
-                const SizedBox(width: 18),
-                Expanded(flex: 7, child: composer),
-              ],
-            )
-          : Column(children: [preview, const SizedBox(height: 16), composer]),
+      child: _buildComposer(isWide),
     );
   }
 
@@ -224,14 +202,14 @@ class _HomePageState extends State<HomePage>
       child: Column(
         children: [
           TemplatesHero(onQuickStart: _scheduleCall),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = constraints.maxWidth >= 900 ? 3 : 1;
-              final cardWidth = (constraints.maxWidth - (14 * (columns - 1))) / columns;
+              final cardWidth = (constraints.maxWidth - (8 * (columns - 1))) / columns;
               return Wrap(
-                spacing: 14,
-                runSpacing: 14,
+                spacing: 8,
+                runSpacing: 8,
                 children: callTemplates
                     .map(
                       (template) => SizedBox(
@@ -261,7 +239,7 @@ class _HomePageState extends State<HomePage>
             nextCall: _controller.scheduled.isEmpty ? null : _controller.scheduled.first,
             onClearAll: () => _controller.clearQueue(context.pulse.amber),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           UpcomingPanel(
             scheduled: _controller.scheduled,
             onCancel: (id) => _controller.cancelCall(id, context.pulse.danger),
@@ -274,6 +252,7 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildSettingsPage(bool isWide) {
     final defaults = _buildDefaultSettings();
+    final advanced = _buildAdvancedSettings();
     final about = _buildAboutSettings();
     return KeyedSubtree(
       key: const ValueKey('settings'),
@@ -282,19 +261,29 @@ class _HomePageState extends State<HomePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(child: defaults),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
+                Expanded(child: advanced),
+                const SizedBox(width: 8),
                 Expanded(child: about),
               ],
             )
-          : Column(children: [defaults, const SizedBox(height: 16), about]),
+          : Column(
+              children: [
+                defaults,
+                const SizedBox(height: 8),
+                advanced,
+                const SizedBox(height: 8),
+                about,
+              ],
+            ),
     );
   }
 
-  Widget _buildComposer() {
+  Widget _buildComposer(bool isWide) {
     return Column(
       children: [
         PulseGlassPanel(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -306,11 +295,11 @@ class _HomePageState extends State<HomePage>
               const SizedBox(height: 16),
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final compact = constraints.maxWidth < 560;
+                  final compact = constraints.maxWidth < 720;
                   final cards = List.generate(callerPresets.length, (index) {
                     return Padding(
                       padding: EdgeInsets.only(
-                        bottom: index == callerPresets.length - 1 ? 0 : 10,
+                        bottom: index == callerPresets.length - 1 ? 0 : 8,
                       ),
                       child: PresetCard(
                         preset: callerPresets[index],
@@ -325,7 +314,7 @@ class _HomePageState extends State<HomePage>
                         .map(
                           (card) => Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 8),
                               child: card,
                             ),
                           ),
@@ -335,26 +324,51 @@ class _HomePageState extends State<HomePage>
                 },
               ),
               const SizedBox(height: 18),
-              PulseTextInput(
-                controller: _controller.nameController,
-                label: 'Name',
-                icon: Icons.person_outline,
-                hintText: 'e.g. Angad Kumar',
-              ),
-              const SizedBox(height: 12),
-              PulseTextInput(
-                controller: _controller.numberController,
-                label: 'Number',
-                icon: Icons.dialpad_outlined,
-                hintText: '+91 98765 43210',
-                keyboardType: TextInputType.phone,
-              ),
+              if (isWide)
+                Row(
+                  children: [
+                    Expanded(
+                      child: PulseTextInput(
+                        controller: _controller.nameController,
+                        label: 'Name',
+                        icon: Icons.person_outline,
+                        hintText: 'e.g. Angad Kumar',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: PulseTextInput(
+                        controller: _controller.numberController,
+                        label: 'Number',
+                        icon: Icons.dialpad_outlined,
+                        hintText: '+91 98765 43210',
+                        keyboardType: TextInputType.phone,
+                      ),
+                    ),
+                  ],
+                )
+              else ...[
+                PulseTextInput(
+                  controller: _controller.nameController,
+                  label: 'Name',
+                  icon: Icons.person_outline,
+                  hintText: 'e.g. Angad Kumar',
+                ),
+                const SizedBox(height: 8),
+                PulseTextInput(
+                  controller: _controller.numberController,
+                  label: 'Number',
+                  icon: Icons.dialpad_outlined,
+                  hintText: '+91 98765 43210',
+                  keyboardType: TextInputType.phone,
+                ),
+              ],
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         PulseGlassPanel(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -374,36 +388,7 @@ class _HomePageState extends State<HomePage>
                 repeatCount: _controller.repeatCount,
                 onChanged: _controller.setRepeat,
               ),
-              const SizedBox(height: 12),
-              PulseSwitchTile(
-                icon: Icons.vibration_outlined,
-                title: 'Vibration',
-                subtitle: 'Ring',
-                value: _controller.vibrate,
-                onChanged: _controller.setVibrate,
-              ),
-              const SizedBox(height: 10),
-              PulseSwitchTile(
-                icon: Icons.flash_on_outlined,
-                title: 'Screen Flash',
-                subtitle: 'Pulse',
-                value: _controller.screenFlash,
-                onChanged: _controller.setScreenFlash,
-              ),
-              const SizedBox(height: 16),
-              AdvancedCallPanel(
-                profiles: callProfiles,
-                selectedProfile: _controller.selectedProfile,
-                showCallerNumber: _controller.showCallerNumber,
-                autoEndCall: _controller.autoEndCall,
-                autoEndSeconds: _controller.autoEndSeconds,
-                noteController: _controller.noteController,
-                onProfileChanged: _controller.setProfile,
-                onShowNumberChanged: _controller.setShowCallerNumber,
-                onAutoEndChanged: _controller.setAutoEndCall,
-                onAutoEndSecondsChanged: _controller.setAutoEndSeconds,
-              ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 14),
               ScaleTransition(
                 scale: _pulseController,
                 child: SizedBox(
@@ -431,7 +416,7 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildDefaultSettings() {
     return PulseGlassPanel(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -466,9 +451,27 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  Widget _buildAdvancedSettings() {
+    return PulseGlassPanel(
+      padding: const EdgeInsets.all(14),
+      child: AdvancedCallPanel(
+        profiles: callProfiles,
+        selectedProfile: _controller.selectedProfile,
+        showCallerNumber: _controller.showCallerNumber,
+        autoEndCall: _controller.autoEndCall,
+        autoEndSeconds: _controller.autoEndSeconds,
+        noteController: _controller.noteController,
+        onProfileChanged: _controller.setProfile,
+        onShowNumberChanged: _controller.setShowCallerNumber,
+        onAutoEndChanged: _controller.setAutoEndCall,
+        onAutoEndSecondsChanged: _controller.setAutoEndSeconds,
+      ),
+    );
+  }
+
   Widget _buildAboutSettings() {
     return const PulseGlassPanel(
-      padding: EdgeInsets.all(18),
+      padding: EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

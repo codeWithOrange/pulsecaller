@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -36,15 +37,15 @@ class PulseColors extends ThemeExtension<PulseColors> {
     ink: Color(0xFFF7FBFF),
     inkMuted: Color(0xFFB8C9D5),
     inkSubtle: Color(0xFF7F95A3),
-    surface: Color(0xCC081522),
-    surfaceStrong: Color(0xE60E2232),
-    line: Color(0x2EFFFFFF),
-    cyan: Color(0xFF5EE7DF),
-    mint: Color(0xFF7EF7A6),
-    coral: Color(0xFFFF8A8A),
-    amber: Color(0xFFFFC857),
+    surface: Color(0xD60A131C),
+    surfaceStrong: Color(0xF0101E2A),
+    line: Color(0x24FFFFFF),
+    cyan: Color(0xFF67E8F9),
+    mint: Color(0xFF86EFAC),
+    coral: Color(0xFFFB7185),
+    amber: Color(0xFFFBBF24),
     danger: Color(0xFFFF4D67),
-    success: Color(0xFF35D985),
+    success: Color(0xFF22C55E),
   );
 
   @override
@@ -103,9 +104,9 @@ extension PulseThemeX on BuildContext {
 }
 
 abstract final class PulseRadius {
-  static const sm = 12.0;
-  static const md = 16.0;
-  static const lg = 22.0;
+  static const sm = 6.0;
+  static const md = 8.0;
+  static const lg = 8.0;
   static const pill = 99.0;
 }
 
@@ -113,7 +114,12 @@ abstract final class PulseGradients {
   static const app = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF07111F), Color(0xFF12343B), Color(0xFF1D3326)],
+    colors: [
+      Color(0xFF03070B),
+      Color(0xFF09131A),
+      Color(0xFF0B1F22),
+      Color(0xFF111016),
+    ],
   );
 
   static const call = LinearGradient(
@@ -161,14 +167,14 @@ class PulseTheme {
       textTheme: TextTheme(
         headlineLarge: TextStyle(
           color: PulseColors.dark.ink,
-          fontSize: 34,
-          height: 1.08,
-          fontWeight: FontWeight.w800,
+          fontSize: 32,
+          height: 1.05,
+          fontWeight: FontWeight.w900,
         ),
         titleLarge: TextStyle(
           color: PulseColors.dark.ink,
-          fontSize: 24,
-          fontWeight: FontWeight.w800,
+          fontSize: 22,
+          fontWeight: FontWeight.w900,
         ),
         titleMedium: TextStyle(
           color: PulseColors.dark.ink,
@@ -203,13 +209,13 @@ class PulseTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          foregroundColor: const Color(0xFF041017),
+          foregroundColor: const Color(0xFF031016),
           backgroundColor: PulseColors.dark.cyan,
           disabledBackgroundColor: PulseColors.dark.surfaceStrong,
           disabledForegroundColor: PulseColors.dark.inkSubtle,
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(PulseRadius.md),
+            borderRadius: BorderRadius.circular(PulseRadius.sm),
           ),
         ),
       ),
@@ -304,8 +310,8 @@ class _PulseBackgroundState extends State<PulseBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 8),
-    )..repeat(reverse: true);
+      duration: const Duration(seconds: 14),
+    )..repeat();
   }
 
   @override
@@ -325,32 +331,14 @@ class _PulseBackgroundState extends State<PulseBackground>
         children: [
           AnimatedBuilder(
             animation: _controller,
-            builder: (context, _) {
-              final value = _controller.value;
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  _AuroraGlow(
-                    alignment: Alignment(-0.9 + value * 0.35, -0.86),
-                    color: pulse.cyan,
-                    size: 330,
-                    opacity: 0.14,
-                  ),
-                  _AuroraGlow(
-                    alignment: Alignment(0.84, -0.34 + value * 0.28),
-                    color: pulse.mint,
-                    size: 280,
-                    opacity: 0.12,
-                  ),
-                  _AuroraGlow(
-                    alignment: Alignment(-0.25 + value * 0.22, 0.92),
-                    color: pulse.coral,
-                    size: 260,
-                    opacity: 0.08,
-                  ),
-                ],
-              );
-            },
+            builder: (context, _) => CustomPaint(
+              painter: _PulseBackdropPainter(
+                progress: _controller.value,
+                line: pulse.line,
+                cyan: pulse.cyan,
+                coral: pulse.coral,
+              ),
+            ),
           ),
           if (widget.blurImageAsset != null)
             ImageFiltered(
@@ -368,37 +356,145 @@ class _PulseBackgroundState extends State<PulseBackground>
   }
 }
 
-class _AuroraGlow extends StatelessWidget {
-  const _AuroraGlow({
-    required this.alignment,
-    required this.color,
-    required this.size,
-    required this.opacity,
+class _PulseBackdropPainter extends CustomPainter {
+  const _PulseBackdropPainter({
+    required this.progress,
+    required this.line,
+    required this.cyan,
+    required this.coral,
   });
 
-  final Alignment alignment;
-  final Color color;
-  final double size;
-  final double opacity;
+  final double progress;
+  final Color line;
+  final Color cyan;
+  final Color coral;
 
   @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [
-              color.withValues(alpha: opacity),
-              Colors.transparent,
-            ],
-          ),
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+
+    final topLight = Paint()
+      ..shader = RadialGradient(
+        center: Alignment(
+          -0.72 + math.sin(progress * math.pi * 2) * 0.08,
+          -0.92 + math.cos(progress * math.pi * 2) * 0.04,
         ),
-      ),
-    );
+        radius: 0.86,
+        colors: [
+          cyan.withValues(alpha: 0.18),
+          cyan.withValues(alpha: 0.055),
+          Colors.transparent,
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, topLight);
+
+    final sideLight = Paint()
+      ..shader = RadialGradient(
+        center: Alignment(
+          0.92,
+          -0.2 + math.sin(progress * math.pi * 2 + 1.2) * 0.12,
+        ),
+        radius: 0.72,
+        colors: [
+          coral.withValues(alpha: 0.11),
+          coral.withValues(alpha: 0.032),
+          Colors.transparent,
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, sideLight);
+
+    final diagonalSheen = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment(-1.08 + progress * 0.54, -0.82),
+        end: Alignment(0.42 + progress * 0.54, 1.0),
+        colors: [
+          Colors.transparent,
+          Colors.white.withValues(alpha: 0.035),
+          cyan.withValues(alpha: 0.045),
+          Colors.transparent,
+        ],
+        stops: const [0.08, 0.42, 0.58, 0.92],
+      ).createShader(rect);
+    canvas.drawRect(rect, diagonalSheen);
+
+    final linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..color = line.withValues(alpha: 0.18);
+    for (var index = 0; index < 5; index++) {
+      final inset = 42.0 + index * 74;
+      final drift = math.sin(progress * math.pi * 2 + index) * 14;
+      final path = Path()
+        ..moveTo(-30, size.height * 0.18 + index * 58 + drift)
+        ..cubicTo(
+          size.width * 0.32,
+          inset,
+          size.width * 0.55,
+          size.height - inset,
+          size.width + 34,
+          size.height * 0.38 + index * 38 - drift,
+        );
+      canvas.drawPath(path, linePaint);
+    }
+
+    final wavePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2
+      ..color = cyan.withValues(alpha: 0.055);
+    for (var index = 0; index < 3; index++) {
+      final phase = (progress + index / 3) % 1;
+      final radius = 90 + phase * size.shortestSide * 0.9;
+      final opacity = (1 - phase).clamp(0.0, 1.0);
+      wavePaint.color = cyan.withValues(alpha: 0.06 * opacity);
+      canvas.drawCircle(
+        Offset(size.width * 0.78, size.height * 0.18),
+        radius,
+        wavePaint,
+      );
+    }
+
+    final particlePaint = Paint()..style = PaintingStyle.fill;
+    for (var index = 0; index < 18; index++) {
+      final seed = index * 37.0;
+      final x = (size.width * ((index * 0.173) % 1.0)) +
+          math.sin(progress * math.pi * 2 + seed) * 18;
+      final baseY = size.height * ((index * 0.097 + 0.12) % 1.0);
+      final y = (baseY - progress * 54 + size.height) % size.height;
+      final pulse = 0.5 + math.sin(progress * math.pi * 2 + seed) * 0.5;
+      particlePaint.color = (index.isEven ? cyan : coral).withValues(
+        alpha: 0.035 + pulse * 0.035,
+      );
+      canvas.drawCircle(Offset(x, y), 1.4 + pulse * 1.2, particlePaint);
+    }
+
+    final bottomDepth = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.transparent,
+          Colors.black.withValues(alpha: 0.34),
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, bottomDepth);
+
+    final vignette = Paint()
+      ..shader = RadialGradient(
+        radius: 1.0,
+        colors: [
+          Colors.transparent,
+          Colors.black.withValues(alpha: 0.46),
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, vignette);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PulseBackdropPainter oldDelegate) {
+    return progress != oldDelegate.progress ||
+        line != oldDelegate.line ||
+        cyan != oldDelegate.cyan ||
+        coral != oldDelegate.coral;
   }
 }
 
@@ -424,9 +520,9 @@ class PulseGlassPanel extends StatelessWidget {
             border: Border.all(color: pulse.line),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.24),
-                blurRadius: 28,
-                offset: const Offset(0, 18),
+                color: Colors.black.withValues(alpha: 0.32),
+                blurRadius: 34,
+                offset: const Offset(0, 22),
               ),
             ],
           ),
