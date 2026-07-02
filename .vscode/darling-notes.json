@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "notes": [
+    {
+      "id": "note_1782889210971",
+      "filePath": "lib/pages/fakeCallPage.dart",
+      "range": {
+        "startLine": 39,
+        "startCharacter": 15,
+        "endLine": 44,
+        "endCharacter": 20
+      },
+      "comments": [
+        {
+          "author": "varun",
+          "body": "asdfasdasf",
+          "timestamp": 1782889210974
+        }
+      ],
+      "color": "yellow"
+    },
+    {
+      "id": "note_1782890979359",
+      "filePath": "lib/main.dart",
+      "range": {
+        "startLine": 14,
+        "startCharacter": 6,
+        "endLine": 19,
+        "endCharacter": 29
+      },
+      "comments": [
+        {
+          "author": "varun",
+          "body": "asdasdfasdf",
+          "timestamp": 1782890979362
+        }
+      ],
+      "color": "yellow"
+    },
+    {
+      "id": "note_1782892591522",
+      "filePath": "lib/pages/fakeCallPage.dart",
+      "range": {
+        "startLine": 12,
+        "startCharacter": 6,
+        "endLine": 19,
+        "endCharacter": 24
+      },
+      "comments": [
+        {
+          "author": "varun",
+          "body": "dasdfasdfasdf",
+          "timestamp": 1782892591525
+        }
+      ],
+      "color": "yellow"
+    },
+    {
+      "id": "note_1782892695518",
+      "filePath": "lib/pages/fakeCallPage.dart",
+      "range": {
+        "startLine": 23,
+        "startCharacter": 4,
+        "endLine": 30,
+        "endCharacter": 28
+      },
+      "comments": [
+        {
+          "author": "varun",
+          "body": "fasdfas",
+          "timestamp": 1782892695521
+        }
+      ],
+      "color": "yellow"
+    },
+    {
+      "id": "note_1782893787795",
+      "filePath": "lib/widgets/home_widgets.dart",
+      "range": {
+        "startLine": 30,
+        "startCharacter": 19,
+        "endLine": 34,
+        "endCharacter": 46
+      },
+      "comments": [
+        {
+          "author": "varun",
+          "body": "asdfasdf asdkljfa;sd fasdlfjas;df",
+          "timestamp": 1782894704342
+        }
+      ],
+      "color": "yellow"
+    }
+  ]
+}

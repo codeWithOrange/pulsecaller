@@ -50,7 +50,9 @@ class _HomePageState extends State<HomePage>
       return;
     }
 
-    final delayLabel = formatDurationShort(Duration(seconds: _controller.delaySeconds));
+    final delayLabel = formatDurationShort(
+      Duration(seconds: _controller.delaySeconds),
+    );
     _showSnack(
       _controller.repeatCount == 1
           ? 'Call scheduled in $delayLabel'
@@ -181,7 +183,10 @@ class _HomePageState extends State<HomePage>
       case 2:
         return _buildQueuePage();
       case 3:
-        return HistoryPanel(key: const ValueKey('history'), history: _controller.history);
+        return HistoryPanel(
+          key: const ValueKey('history'),
+          history: _controller.history,
+        );
       case 4:
         return _buildSettingsPage(isWide);
       default:
@@ -206,7 +211,8 @@ class _HomePageState extends State<HomePage>
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = constraints.maxWidth >= 900 ? 3 : 1;
-              final cardWidth = (constraints.maxWidth - (8 * (columns - 1))) / columns;
+              final cardWidth =
+                  (constraints.maxWidth - (8 * (columns - 1))) / columns;
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -236,7 +242,9 @@ class _HomePageState extends State<HomePage>
         children: [
           QueueHero(
             queuedCount: _controller.scheduled.length,
-            nextCall: _controller.scheduled.isEmpty ? null : _controller.scheduled.first,
+            nextCall: _controller.scheduled.isEmpty
+                ? null
+                : _controller.scheduled.first,
             onClearAll: () => _controller.clearQueue(context.pulse.amber),
           ),
           const SizedBox(height: 8),

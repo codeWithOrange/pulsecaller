@@ -113,12 +113,14 @@ class HomeTopBar extends StatelessWidget {
                   appname,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontSize: 22,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontSize: 22),
                 ),
                 Text(
-                  queuedCount == 0 ? 'Ready to schedule' : '$queuedCount calls queued',
+                  queuedCount == 0
+                      ? 'Ready to schedule'
+                      : '$queuedCount calls queued',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
@@ -196,7 +198,10 @@ class QuickActionPanel extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: pulse.mint.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(PulseRadius.pill),
@@ -265,7 +270,10 @@ class _CompactStatus extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: pulse.inkMuted, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: pulse.inkMuted,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

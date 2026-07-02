@@ -1,3 +1,6 @@
 {
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "editor.cursorStyle": "block-outline",
+  "editor.cursorBlinking": "smooth",
+  "cmake.sourceDirectory": "E:/VISUAL/FLUTTER/1-FLUTTER-MYPROJECTS/2-pulseCall/pulsecall/windows"
 }
