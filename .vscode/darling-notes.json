@@ -72,24 +72,6 @@
         }
       ],
       "color": "yellow"
-    },
-    {
-      "id": "note_1782893787795",
-      "filePath": "lib/widgets/home_widgets.dart",
-      "range": {
-        "startLine": 30,
-        "startCharacter": 19,
-        "endLine": 34,
-        "endCharacter": 46
-      },
-      "comments": [
-        {
-          "author": "varun",
-          "body": "asdfasdf asdkljfa;sd fasdlfjas;df",
-          "timestamp": 1782894704342
-        }
-      ],
-      "color": "yellow"
     }
   ]
 }

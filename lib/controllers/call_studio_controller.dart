@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:pulsecall/models/call_models.dart';
 
@@ -9,6 +8,7 @@ class CallStudioController extends ChangeNotifier {
     nameController.addListener(_onTextChanged);
     numberController.addListener(_onTextChanged);
     noteController.addListener(_onTextChanged);
+    dialpadController.addListener(_onTextChanged);
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_scheduled.isNotEmpty) notifyListeners();
     });
@@ -17,10 +17,11 @@ class CallStudioController extends ChangeNotifier {
   final nameController = TextEditingController();
   final numberController = TextEditingController();
   final noteController = TextEditingController();
+  final dialpadController = TextEditingController();
 
   final List<ScheduledCall> _scheduled = [];
   final List<CallHistoryItem> _history = [];
-  final quickDelays = const [5, 15, 30, 60, 180, 300];
+  final quickDelays = const [5, 10, 15, 30, 60, 180, 300];
 
   Timer? _ticker;
   bool _mutingTextListeners = false;
@@ -28,6 +29,10 @@ class CallStudioController extends ChangeNotifier {
   int selectedPage = 0;
   int selectedPreset = 0;
   int selectedProfile = 0;
+  CallScreenSkin selectedSkin = CallScreenSkin.ios;
+  String selectedCarrier = 'SIM 1 - Jio 5G';
+  VibrationPatternType selectedVibration = VibrationPatternType.standard;
+
   int delaySeconds = 15;
   int repeatCount = 1;
   int autoEndSeconds = 45;
@@ -35,6 +40,7 @@ class CallStudioController extends ChangeNotifier {
   bool screenFlash = false;
   bool showCallerNumber = true;
   bool autoEndCall = false;
+  bool proximityBlackout = true;
 
   List<ScheduledCall> get scheduled => List.unmodifiable(_scheduled);
   List<CallHistoryItem> get history => List.unmodifiable(_history);
@@ -62,37 +68,76 @@ class CallStudioController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSkin(CallScreenSkin skin) {
+    selectedSkin = skin;
+    notifyListeners();
+  }
+
+  void setCarrier(String carrier) {
+    selectedCarrier = carrier;
+    notifyListeners();
+  }
+
+  void setVibrationPattern(VibrationPatternType pattern) {
+    selectedVibration = pattern;
+    vibrate = pattern != VibrationPatternType.silent;
+    notifyListeners();
+  }
+
+  void setProximityBlackout(bool value) {
+    proximityBlackout = value;
+    notifyListeners();
+  }
+
   void applyPreset(int index, {bool notify = true}) {
+    if (index < 0 || index >= callerPresets.length) return;
     selectedPreset = index;
     final preset = callerPresets[index];
     _setText(() {
       nameController.text = preset.name;
       numberController.text = preset.number;
+      dialpadController.text = preset.number;
+      noteController.text = preset.defaultNote;
     });
+    selectedCarrier = preset.carrier;
     if (notify) notifyListeners();
   }
 
+  void setCustomCaller({
+    required String name,
+    required String number,
+    required String carrier,
+    String note = '',
+  }) {
+    selectedPreset = -1;
+    _setText(() {
+      nameController.text = name;
+      numberController.text = number;
+      dialpadController.text = number;
+      noteController.text = note;
+    });
+    selectedCarrier = carrier;
+    notifyListeners();
+  }
+
   void applyTemplate(CallTemplate template) {
+    selectedPreset = -1;
     _setText(() {
       nameController.text = template.name;
       numberController.text = template.number;
+      dialpadController.text = template.number;
       noteController.text = template.note;
     });
+    selectedCarrier = template.carrier;
     delaySeconds = template.delaySeconds;
     repeatCount = template.repeatCount;
-    selectedProfile = template.profileIndex;
+    selectedProfile = template.profileIndex.clamp(0, callProfiles.length - 1);
     vibrate = template.vibrate;
     screenFlash = template.screenFlash;
     showCallerNumber = template.showCallerNumber;
     autoEndCall = template.autoEndSeconds != null;
     autoEndSeconds = template.autoEndSeconds ?? autoEndSeconds;
-    selectedPage = 0;
-    recordHistory(
-      title: 'Template loaded',
-      subtitle: template.title,
-      icon: Icons.layers_outlined,
-      accent: template.accent,
-    );
+    selectedPage = 0; // jump to keypad
     notifyListeners();
   }
 
@@ -119,6 +164,11 @@ class CallStudioController extends ChangeNotifier {
 
   void setVibrate(bool value) {
     vibrate = value;
+    if (!value) {
+      selectedVibration = VibrationPatternType.silent;
+    } else if (selectedVibration == VibrationPatternType.silent) {
+      selectedVibration = VibrationPatternType.standard;
+    }
     notifyListeners();
   }
 
@@ -142,9 +192,45 @@ class CallStudioController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Dialpad functionality
+  void dialDigit(String digit) {
+    dialpadController.text += digit;
+    notifyListeners();
+  }
+
+  void dialBackspace() {
+    final text = dialpadController.text;
+    if (text.isNotEmpty) {
+      dialpadController.text = text.substring(0, text.length - 1);
+      notifyListeners();
+    }
+  }
+
+  void clearDialpad() {
+    dialpadController.clear();
+    notifyListeners();
+  }
+
+  void scheduleFromDialpad(ValueChanged<String> onLaunch) {
+    final dialed = dialpadController.text.trim();
+    if (dialed.isEmpty) return;
+    _setText(() {
+      nameController.text = 'Custom Dial';
+      numberController.text = dialed;
+    });
+    scheduleCalls(onLaunch);
+    selectedPage = 0;
+  }
+
+  bool quickEscapeTrigger(int delaySec, ValueChanged<String> onLaunch) {
+    delaySeconds = delaySec;
+    repeatCount = 1;
+    return scheduleCalls(onLaunch);
+  }
+
   bool scheduleCalls(ValueChanged<String> onLaunch) {
-    final name = nameController.text.trim();
-    final number = numberController.text.trim();
+    final name = callerName;
+    final number = callerNumber;
     if (name.isEmpty) return false;
 
     for (var index = 0; index < repeatCount; index++) {
@@ -155,12 +241,15 @@ class CallStudioController extends ChangeNotifier {
         id: id,
         name: name,
         number: number.isEmpty ? 'Private Number' : number,
+        carrier: selectedCarrier,
         delaySeconds: totalDelay,
         vibrate: vibrate,
+        vibrationPattern: selectedVibration,
         screenFlash: screenFlash,
         showCallerNumber: showCallerNumber,
         callNote: callNote,
         callProfile: currentProfile.label,
+        skin: selectedSkin,
         profileAccent: currentProfile.accent,
         autoEndSeconds: resolvedAutoEndSeconds,
         scheduledAt: fireAt,
@@ -170,12 +259,6 @@ class CallStudioController extends ChangeNotifier {
     }
 
     _scheduled.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-    recordHistory(
-      title: repeatCount == 1 ? 'Call scheduled' : 'Batch scheduled',
-      subtitle: '$name in ${formatDurationShort(Duration(seconds: delaySeconds))}',
-      icon: Icons.add_call,
-      accent: currentProfile.accent,
-    );
     notifyListeners();
     return true;
   }
@@ -184,14 +267,22 @@ class CallStudioController extends ChangeNotifier {
     final call = _scheduled.where((item) => item.id == id).firstOrNull;
     if (call == null) return null;
     _scheduled.removeWhere((item) => item.id == id);
-    recordHistory(
-      title: 'Call launched',
-      subtitle: call.name,
-      icon: Icons.phone_callback_outlined,
-      accent: call.profileAccent,
-    );
     notifyListeners();
     return call;
+  }
+
+  void snoozeCall(String id, int extraSeconds, ValueChanged<String> onLaunch) {
+    final call = _scheduled.where((item) => item.id == id).firstOrNull;
+    if (call == null) return;
+    call.timer.cancel();
+    final newScheduledAt = DateTime.now().add(Duration(seconds: extraSeconds));
+    call.scheduledAt = newScheduledAt;
+    call.timer = Timer(
+      newScheduledAt.difference(DateTime.now()),
+      () => onLaunch(id),
+    );
+    _scheduled.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+    notifyListeners();
   }
 
   void cancelCall(String id, Color accent) {
@@ -199,10 +290,13 @@ class CallStudioController extends ChangeNotifier {
     call?.timer.cancel();
     _scheduled.removeWhere((item) => item.id == id);
     if (call != null) {
-      recordHistory(
-        title: 'Schedule cancelled',
-        subtitle: call.name,
-        icon: Icons.cancel_outlined,
+      recordCallResult(
+        name: call.name,
+        number: call.number,
+        note: 'Cancelled pending call',
+        status: CallStatus.declined,
+        duration: Duration.zero,
+        skin: call.skin,
         accent: accent,
       );
     }
@@ -216,42 +310,48 @@ class CallStudioController extends ChangeNotifier {
       call.timer.cancel();
     }
     _scheduled.clear();
-    recordHistory(
-      title: 'Queue cleared',
-      subtitle: '$count calls removed',
-      icon: Icons.delete_sweep_outlined,
+    recordCallResult(
+      name: 'Queue Cleared',
+      number: '$count removed',
+      note: 'Cleared all pending scheduled triggers',
+      status: CallStatus.declined,
+      duration: Duration.zero,
+      skin: selectedSkin,
       accent: accent,
     );
     notifyListeners();
   }
 
-  void recordPreview() {
-    recordHistory(
-      title: 'Preview opened',
-      subtitle: callerName,
-      icon: Icons.play_circle_outline,
-      accent: currentProfile.accent,
-    );
+  void clearHistory() {
+    _history.clear();
     notifyListeners();
   }
 
-  void recordHistory({
-    required String title,
-    required String subtitle,
-    required IconData icon,
+  void recordCallResult({
+    required String name,
+    required String number,
+    required String note,
+    required CallStatus status,
+    required Duration duration,
+    required CallScreenSkin skin,
     required Color accent,
   }) {
     _history.insert(
       0,
       CallHistoryItem(
-        title: title,
-        subtitle: subtitle,
-        icon: icon,
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        name: name,
+        number: number,
+        note: note,
+        status: status,
+        duration: duration,
+        skin: skin,
         accent: accent,
         createdAt: DateTime.now(),
       ),
     );
-    if (_history.length > 30) _history.removeLast();
+    if (_history.length > 40) _history.removeLast();
+    notifyListeners();
   }
 
   @override
@@ -263,6 +363,7 @@ class CallStudioController extends ChangeNotifier {
     nameController.dispose();
     numberController.dispose();
     noteController.dispose();
+    dialpadController.dispose();
     super.dispose();
   }
 }

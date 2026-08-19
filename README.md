@@ -1,16 +1,9 @@
-# pulsecall
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Space + Shift+F + r  →  Flutter Run
+Space + Shift+F + q  →  Flutter Quit
+Space + Shift+F + h  →  Hot Reload
+Space + Shift+F + s  →  Hot Restart
+Space + Shift+F + d  →  Devices
+Space + Shift+F + e  →  Emulators
+Space + Shift+F + o  →  Outline Toggle
+Space + Shift+F + v  →  Dev Log
+Space + Shift+F + g  →  DevTools

@@ -1,5 +1,6 @@
 import 'package:pulsecall/pages/homePage.dart';
 import 'package:pulsecall/theme/app_theme.dart';
+import 'package:pulsecall/widgets/app_update_gate.dart';
 import 'package:pulsecall/utils/constants.dart';
 
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class CallPromptApp extends StatelessWidget {
       title: appname,
       debugShowCheckedModeBanner: false,
       theme: PulseTheme.dark(),
-      home: const HomePage(),
+      home: const AppUpdateGate(child: HomePage()),
     );
   }
 }
