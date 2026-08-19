@@ -215,7 +215,9 @@ class CallStudioController extends ChangeNotifier {
     final dialed = dialpadController.text.trim();
     if (dialed.isEmpty) return;
     _setText(() {
-      nameController.text = 'Custom Dial';
+      if (nameController.text.trim().isEmpty) {
+        nameController.text = dialed;
+      }
       numberController.text = dialed;
     });
     scheduleCalls(onLaunch);

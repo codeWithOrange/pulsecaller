@@ -415,7 +415,9 @@ class _HomePageState extends State<HomePage> {
               final dialed = _controller.dialpadController.text.trim();
               if (dialed.isNotEmpty) {
                 _controller.numberController.text = dialed;
-                _controller.nameController.text = 'Direct Dial';
+                if (_controller.nameController.text.trim().isEmpty) {
+                  _controller.nameController.text = dialed;
+                }
               }
               _previewCall();
             },
