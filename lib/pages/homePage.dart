@@ -352,7 +352,11 @@ class _HomePageState extends State<HomePage> {
                       shape: BoxShape.circle,
                       color: pulse.cyan.withValues(alpha: 0.15),
                     ),
-                    child: Icon(Icons.person_rounded, color: pulse.cyan, size: 22),
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: pulse.cyan,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -373,10 +377,17 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(PulseRadius.pill),
+                                color: const Color(
+                                  0xFF10B981,
+                                ).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(
+                                  PulseRadius.pill,
+                                ),
                               ),
                               child: const Text(
                                 'ACTIVE',
@@ -393,7 +404,10 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 2),
                         Text(
                           '${_controller.callerNumber}  •  ${_controller.selectedCarrier}',
-                          style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
+                          style: TextStyle(
+                            color: pulse.inkSubtle,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -480,7 +494,11 @@ class _HomePageState extends State<HomePage> {
                       shape: BoxShape.circle,
                       color: pulse.cyan.withValues(alpha: 0.18),
                     ),
-                    child: Icon(Icons.person_add_rounded, color: pulse.cyan, size: 20),
+                    child: Icon(
+                      Icons.person_add_rounded,
+                      color: pulse.cyan,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   const Expanded(
@@ -493,7 +511,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  Icon(Icons.chevron_right_rounded, color: pulse.cyan, size: 20),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: pulse.cyan,
+                    size: 20,
+                  ),
                 ],
               ),
             ),
@@ -931,9 +953,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (ctx) => AlertDialog(
                       backgroundColor: pulse.surfaceStrong,
                       title: const Text('Clear Recents?'),
-                      content: const Text(
-                        'All call logs will be removed.',
-                      ),
+                      content: const Text('All call logs will be removed.'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx),
