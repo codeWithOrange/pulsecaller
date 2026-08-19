@@ -545,15 +545,10 @@ class _CustomCallerModalSheetState extends State<CustomCallerModalSheet> {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Custom Caller Details',
+              'Custom Caller',
               style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Configure caller identity, network line & timer countdown',
-              style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
             // Caller Name
             TextField(
@@ -1206,7 +1201,7 @@ class SettingsProfileHeader extends StatelessWidget {
     final pulse = context.pulse;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: pulse.surface,
         borderRadius: BorderRadius.circular(PulseRadius.md),
@@ -1214,32 +1209,31 @@ class SettingsProfileHeader extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: pulse.cyan.withValues(alpha: 0.15),
-              border: Border.all(color: pulse.cyan.withValues(alpha: 0.3), width: 1.5),
             ),
-            child: Icon(Icons.person_rounded, color: pulse.cyan, size: 28),
+            child: Icon(Icons.phone_iphone_rounded, color: pulse.cyan, size: 22),
           ),
           const SizedBox(width: 14),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'PulseCall Studio',
+                Text(
+                  'PulseCall',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
-                  'Offline Call Simulation Engine',
-                  style: TextStyle(color: pulse.inkSubtle, fontSize: 12),
+                  'Offline Call Utility',
+                  style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
                 ),
               ],
             ),
@@ -1251,7 +1245,7 @@ class SettingsProfileHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(PulseRadius.pill),
             ),
             child: const Text(
-              'Active',
+              'v1.0.4',
               style: TextStyle(
                 color: Color(0xFF10B981),
                 fontSize: 11,

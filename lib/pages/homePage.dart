@@ -302,9 +302,6 @@ class _HomePageState extends State<HomePage> {
           // Native Header
           NativeTopBar(
             title: 'Phone',
-            subtitle: _controller.scheduled.isEmpty
-                ? 'Ready to call'
-                : '${_controller.scheduled.length} call scheduled',
             trailing: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
@@ -438,10 +435,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const NativeTopBar(
-            title: 'Contacts',
-            subtitle: 'Saved caller identities & profiles',
-          ),
+          const NativeTopBar(title: 'Contacts'),
           const SizedBox(height: 10),
 
           // Search Bar
@@ -488,22 +482,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(width: 14),
                   const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Add Custom Contact',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          'Create custom caller name, number & line',
-                          style: TextStyle(color: Color(0xFF64748B), fontSize: 11.5),
-                        ),
-                      ],
+                    child: Text(
+                      'Add Contact',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   Icon(Icons.chevron_right_rounded, color: pulse.cyan, size: 20),
@@ -556,8 +541,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           NativeTopBar(
-            title: 'Quick Triggers',
-            subtitle: '1-tap escape shortcuts',
+            title: 'Triggers',
             trailing: scheduled.isNotEmpty
                 ? TextButton(
                     onPressed: () => _controller.clearQueue(pulse.danger),
@@ -573,7 +557,7 @@ class _HomePageState extends State<HomePage> {
           // Active Queue Banner if running
           if (scheduled.isNotEmpty) ...[
             PulseInsetGroup(
-              title: 'Active Scheduled Queue',
+              title: 'Scheduled',
               children: List.generate(scheduled.length, (index) {
                 final call = scheduled[index];
                 return Padding(
@@ -630,7 +614,7 @@ class _HomePageState extends State<HomePage> {
 
           // Quick Scenario Escape Cards
           PulseInsetGroup(
-            title: 'Escape Scenarios',
+            title: 'Scenarios',
             children: List.generate(callTemplates.length, (index) {
               final template = callTemplates[index];
               return Column(
@@ -671,10 +655,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const NativeTopBar(
-            title: 'Recents',
-            subtitle: 'Recent call activity & logs',
-          ),
+          const NativeTopBar(title: 'Recents'),
           const SizedBox(height: 10),
 
           if (history.isEmpty)
@@ -699,7 +680,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Simulated and answered calls will appear here.',
+                      'Simulated calls will appear here.',
                       style: TextStyle(color: pulse.inkSubtle, fontSize: 13),
                     ),
                   ],
@@ -803,10 +784,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const NativeTopBar(
-            title: 'Settings',
-            subtitle: 'Theme, haptics & preferences',
-          ),
+          const NativeTopBar(title: 'Settings'),
           const SizedBox(height: 10),
 
           // Profile Header
@@ -820,7 +798,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.phone_android_rounded,
                 iconColor: const Color(0xFF38BDF8),
-                title: 'Call Screen Theme',
+                title: 'Theme',
                 value: _controller.selectedSkin.label,
                 onTap: () {
                   showModalBottomSheet(
@@ -836,7 +814,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.sim_card_rounded,
                 iconColor: const Color(0xFF0EA5E9),
-                title: 'Default Carrier Line',
+                title: 'Carrier Line',
                 value: _controller.selectedCarrier,
                 onTap: () {
                   showModalBottomSheet(
@@ -852,8 +830,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.visibility_rounded,
                 iconColor: const Color(0xFF10B981),
-                title: 'Show Phone Number',
-                subtitle: 'Display number on incoming call screen',
+                title: 'Show Caller ID',
                 trailing: Switch.adaptive(
                   value: _controller.showCallerNumber,
                   onChanged: _controller.setShowCallerNumber,
@@ -863,7 +840,6 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.timer_off_rounded,
                 iconColor: const Color(0xFF8B5CF6),
                 title: 'Auto-End Call',
-                subtitle: 'End call automatically after answered',
                 trailing: Switch.adaptive(
                   value: _controller.autoEndCall,
                   onChanged: _controller.setAutoEndCall,
@@ -906,8 +882,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.flash_on_rounded,
                 iconColor: const Color(0xFFEAB308),
-                title: 'Screen Flash on Ring',
-                subtitle: 'Subtle white screen strobe when call rings',
+                title: 'Flash on Ring',
                 trailing: Switch.adaptive(
                   value: _controller.screenFlash,
                   onChanged: _controller.setScreenFlash,
@@ -925,8 +900,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.sensors_rounded,
                 iconColor: const Color(0xFFA855F7),
-                title: 'Ear Proximity Sensor',
-                subtitle: 'Dims display when phone is held close to ear',
+                title: 'Proximity Sensor',
                 trailing: Switch.adaptive(
                   value: _controller.proximityBlackout,
                   onChanged: _controller.setProximityBlackout,
@@ -944,8 +918,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.delete_outline_rounded,
                 iconColor: const Color(0xFFEF4444),
-                title: 'Clear Call History',
-                subtitle: 'Delete all simulated call activity logs',
+                title: 'Clear Recents',
                 onTap: () {
                   if (_controller.history.isEmpty) {
                     _showSnack('Call history is already empty');
@@ -955,9 +928,9 @@ class _HomePageState extends State<HomePage> {
                     context: context,
                     builder: (ctx) => AlertDialog(
                       backgroundColor: pulse.surfaceStrong,
-                      title: const Text('Clear Call History?'),
+                      title: const Text('Clear Recents?'),
                       content: const Text(
-                        'All previous simulated call logs will be removed.',
+                        'All call logs will be removed.',
                       ),
                       actions: [
                         TextButton(
@@ -971,7 +944,7 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () {
                             Navigator.pop(ctx);
                             _controller.clearHistory();
-                            _showSnack('Call history cleared', isSuccess: true);
+                            _showSnack('Recents cleared', isSuccess: true);
                           },
                           child: const Text('Clear'),
                         ),
@@ -983,8 +956,7 @@ class _HomePageState extends State<HomePage> {
               SettingsTile(
                 icon: Icons.hourglass_disabled_rounded,
                 iconColor: const Color(0xFFF97316),
-                title: 'Clear Scheduled Queue',
-                subtitle: 'Cancel any pending scheduled calls',
+                title: 'Clear Scheduled Calls',
                 onTap: () {
                   if (_controller.scheduled.isEmpty) {
                     _showSnack('No calls currently scheduled');
@@ -1007,14 +979,13 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.info_outline_rounded,
                 iconColor: Color(0xFF64748B),
                 title: 'App Version',
-                value: '1.0.4+4 (Build 4)',
+                value: '1.0.4',
               ),
               SettingsTile(
-                icon: Icons.security_rounded,
+                icon: Icons.shield_rounded,
                 iconColor: Color(0xFF10B981),
-                title: 'Simulation Mode',
+                title: 'Privacy Mode',
                 value: '100% Offline',
-                subtitle: 'All calls are generated locally on device',
                 showDivider: false,
               ),
             ],

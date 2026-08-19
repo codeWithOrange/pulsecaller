@@ -26,7 +26,7 @@ void main() {
     await tester.tap(find.text('+ Custom'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Custom Caller Details'), findsOneWidget);
+    expect(find.text('Custom Caller'), findsOneWidget);
     expect(find.text('COUNTDOWN DELAY TIMER'), findsOneWidget);
     expect(find.text('REPEAT RINGS'), findsOneWidget);
     expect(find.text('NETWORK LINE'), findsOneWidget);
@@ -44,13 +44,13 @@ void main() {
     // 4. Test Navigation to Contacts tab
     await tester.tap(find.text('Contacts'));
     await tester.pumpAndSettle();
-    expect(find.text('Add Custom Contact'), findsOneWidget);
+    expect(find.text('Add Contact'), findsOneWidget);
     expect(find.text('ALL CONTACTS'), findsOneWidget);
 
     // 5. Test Navigation to Triggers tab
     await tester.tap(find.text('Triggers'));
     await tester.pumpAndSettle();
-    expect(find.text('Work Meeting Call'), findsOneWidget);
+    expect(find.text('Work Meeting'), findsOneWidget);
 
     // 6. Test Navigation to Recents tab
     await tester.tap(find.text('Recents'));
